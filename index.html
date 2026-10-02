@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>統一修猷人民演習帳</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Hiragino Kaku Gothic ProN",
+        "Yu Gothic",
+        Meiryo,
+        sans-serif;
+      background: #f5f6f8;
+      color: #222;
+    }
+
+    /* =========================
+       ヘッダー
+       ========================= */
+
+    header {
+      background: #ffffff;
+      padding: 24px 16px 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    h1 {
+      margin: 0 0 20px;
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+
+    /* =========================
+       教科ボタン
+       ========================= */
+
+    .subject-buttons {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 4px 2px 8px;
+      scrollbar-width: thin;
+    }
+
+    .subject-buttons::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .subject-buttons::-webkit-scrollbar-thumb {
+      background: #bbb;
+      border-radius: 10px;
+    }
+
+    .subject-button {
+      flex: 0 0 auto;
+      border: none;
+      background: #e9ebef;
+      color: #333;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+
+    .subject-button:hover {
+      background: #dfe2e7;
+    }
+
+    .subject-button.active {
+      background: #222;
+      color: #fff;
+    }
+
+
+    /* =========================
+       メイン
+       ========================= */
+
+    main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+
+    /* =========================
+       検索ボックス
+       ========================= */
+
+    .search-box {
+      margin-bottom: 18px;
+    }
+
+    #search-input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1px solid #d5d7db;
+      border-radius: 12px;
+      background: #fff;
+      font-size: 16px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    #search-input:focus {
+      border-color: #888;
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+
+
+    /* =========================
+       問題カード
+       ========================= */
+
+    .question-card {
+      background: #fff;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .question-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .question {
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .question-number {
+      margin-right: 6px;
+      color: #777;
+    }
+
+    .answer {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #eee;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #555;
+    }
+
+    .question-card.open .answer {
+      display: block;
+    }
+
+
+    /* =========================
+       メッセージ
+       ========================= */
+
+    .loading,
+    .error,
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: #777;
+    }
+
+    .error {
+      color: #c33;
+    }
+
+
+    /* =========================
+       スマホ
+       ========================= */
+
+    @media (max-width: 600px) {
+
+      header {
+        padding-top: 20px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      main {
+        padding: 16px 12px 30px;
+      }
+
+      .question-card {
+        padding: 16px;
+      }
+
+      .question {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+
+<body>
+
+  <header>
+
+    <h1>統一修猷人民演習帳</h1>
+
+    <!-- 教科ボタン -->
+    <div class="subject-buttons">
+
+      <button
+        class="subject-button active"
+        onclick="selectSubject('鉄壁', this)">
+        鉄壁
+      </button>
+
+      <button
+        class="subject-button"
+        onclick="selectSubject('インドネシア語', this)">
+        インドネシア語
+      </button>
+
+      <button
+        class="subject-button"
+        onclick="selectSubject('歴史', this)">
+        歴史
+      </button>
+
+      <button
+        class="subject-button"
+        onclick="selectSubject('地理', this)">
+        地理
+      </button>
+
+      <button
+        class="subject-button"
+        onclick="selectSubject('英語', this)">
+        英語
+      </button>
+
+      <button
+        class="subject-button"
+        onclick="selectSubject('数学', this)">
+        数学
+      </button>
+
+      <button
+        class="subject-button"
+        onclick="selectSubject('理科', this)">
+        理科
+      </button>
+
+      <button
+        class="subject-button"
+        onclick="selectSubject('国語', this)">
+        国語
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <main>
+
+    <!-- 検索 -->
+    <div class="search-box">
+      <input
+        type="text"
+        id="search-input"
+        placeholder="問題を検索……"
+        oninput="searchQuestions()"
+      >
+    </div>
+
+
+    <!-- 問題一覧 -->
+    <div id="question-list">
+
+      <div class="loading">
+        問題を読み込んでいます……
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <script>
+
+    // =========================
+    // Googleスプレッドシート
+    // =========================
+
+    const SHEET_URL =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQd_O9LTVb6suHPsPBpfSQfjz4ZzU31cS0iFzUt3EmrXlZDj1MccDicx8HTuzIG8rImpLfAM5PODtnZ/pub?output=csv";
+
+
+    // =========================
+    // 教科と列の対応
+    // =========================
+
+    const subjects = {
+
+      "鉄壁": {
+        questionColumn: 0,
+        answerColumn: 1
+      },
+
+      "インドネシア語": {
+        questionColumn: 2,
+        answerColumn: 3
+      },
+
+      "歴史": {
+        questionColumn: 4,
+        answerColumn: 5
+      },
+
+      "地理": {
+        questionColumn: 6,
+        answerColumn: 7
+      },
+
+      "英語": {
+        questionColumn: 8,
+        answerColumn: 9
+      },
+
+      "数学": {
+        questionColumn: 10,
+        answerColumn: 11
+      },
+
+      "理科": {
+        questionColumn: 12,
+        answerColumn: 13
+      },
+
+      "国語": {
+        questionColumn: 14,
+        answerColumn: 15
+      }
+
+    };
+
+
+    let sheetData = [];
+
+    let currentSubject = "鉄壁";
+
+
+    // =========================
+    // スプレッドシート読み込み
+    // =========================
+
+    async function loadSheet() {
+
+      const questionList =
+        document.getElementById("question-list");
+
+      try {
+
+        const response =
+          await fetch(SHEET_URL);
+
+        if (!response.ok) {
+          throw new Error(
+            "CSVの読み込みに失敗しました。"
+          );
+        }
+
+        const csvText =
+          await response.text();
+
+        sheetData =
+          parseCSV(csvText);
+
+        showQuestions("鉄壁");
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+        questionList.innerHTML = `
+          <div class="error">
+            問題データを読み込めませんでした。<br>
+            スプレッドシートの公開設定などを確認してください。
+          </div>
+        `;
+
+      }
+
+    }
+
+
+    // =========================
+    // CSV解析
+    // =========================
+
+    function parseCSV(text) {
+
+      const rows = [];
+
+      let row = [];
+
+      let cell = "";
+
+      let insideQuotes = false;
+
+
+      for (let i = 0; i < text.length; i++) {
+
+        const char = text[i];
+
+        const nextChar = text[i + 1];
+
+
+        if (
+          char === '"' &&
+          insideQuotes &&
+          nextChar === '"'
+        ) {
+
+          cell += '"';
+
+          i++;
+
+        }
+
+
+        else if (char === '"') {
+
+          insideQuotes =
+            !insideQuotes;
+
+        }
+
+
+        else if (
+          char === "," &&
+          !insideQuotes
+        ) {
+
+          row.push(cell);
+
+          cell = "";
+
+        }
+
+
+        else if (
+          (char === "\n" ||
+           char === "\r") &&
+          !insideQuotes
+        ) {
+
+          if (
+            char === "\r" &&
+            nextChar === "\n"
+          ) {
+
+            i++;
+
+          }
+
+          row.push(cell);
+
+          rows.push(row);
+
+          row = [];
+
+          cell = "";
+
+        }
+
+
+        else {
+
+          cell += char;
+
+        }
+
+      }
+
+
+      if (
+        cell !== "" ||
+        row.length > 0
+      ) {
+
+        row.push(cell);
+
+        rows.push(row);
+
+      }
+
+
+      return rows;
+
+    }
+
+
+    // =========================
+    // 教科切り替え
+    // =========================
+
+    function selectSubject(subject, button) {
+
+      currentSubject = subject;
+
+
+      // activeを変更
+
+      document
+        .querySelectorAll(".subject-button")
+        .forEach(btn => {
+
+          btn.classList.remove("active");
+
+        });
+
+
+      button.classList.add("active");
+
+
+      // 検索欄をリセット
+
+      document.getElementById(
+        "search-input"
+      ).value = "";
+
+
+      // 問題表示
+
+      showQuestions(subject);
+
+    }
+
+
+    // =========================
+    // 問題表示
+    // =========================
+
+    function showQuestions(subject) {
+
+      const questionList =
+        document.getElementById(
+          "question-list"
+        );
+
+
+      questionList.innerHTML = "";
+
+
+      const setting =
+        subjects[subject];
+
+
+      if (!setting) {
+
+        questionList.innerHTML = `
+          <div class="empty">
+            この教科は登録されていません。
+          </div>
+        `;
+
+        return;
+
+      }
+
+
+      // 1行目は見出し
+
+      const rows =
+        sheetData.slice(1);
+
+
+      let questionCount = 0;
+
+
+      rows.forEach(row => {
+
+        const question =
+          row[setting.questionColumn]
+            ?.trim() || "";
+
+
+        const answer =
+          row[setting.answerColumn]
+            ?.trim() || "";
+
+
+        // 問題が空欄なら無視
+
+        if (!question) {
+          return;
+        }
+
+
+        questionCount++;
+
+
+        createQuestionCard(
+          questionList,
+          questionCount,
+          question,
+          answer
+        );
+
+      });
+
+
+      if (questionCount === 0) {
+
+        questionList.innerHTML = `
+          <div class="empty">
+            この教科にはまだ問題がありません。
+          </div>
+        `;
+
+      }
+
+    }
+
+
+    // =========================
+    // 問題カード作成
+    // =========================
+
+    function createQuestionCard(
+      questionList,
+      number,
+      question,
+      answer
+    ) {
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "question-card";
+
+
+      // 問題
+
+      const questionElement =
+        document.createElement("div");
+
+      questionElement.className =
+        "question";
+
+
+      const numberElement =
+        document.createElement("span");
+
+      numberElement.className =
+        "question-number";
+
+      numberElement.textContent =
+        number + ".";
+
+
+      const textElement =
+        document.createElement("span");
+
+      textElement.textContent =
+        question;
+
+
+      questionElement.appendChild(
+        numberElement
+      );
+
+      questionElement.appendChild(
+        textElement
+      );
+
+
+      // 答え
+
+      const answerElement =
+        document.createElement("div");
+
+      answerElement.className =
+        "answer";
+
+      answerElement.textContent =
+        answer || "答えがありません。";
+
+
+      card.appendChild(
+        questionElement
+      );
+
+      card.appendChild(
+        answerElement
+      );
+
+
+      // クリックで開閉
+
+      card.addEventListener(
+        "click",
+        () => {
+
+          card.classList.toggle(
+            "open"
+          );
+
+        }
+      );
+
+
+      questionList.appendChild(card);
+
+    }
+
+
+    // =========================
+    // 検索
+    // =========================
+
+    function searchQuestions() {
+
+      const keyword =
+        document
+          .getElementById("search-input")
+          .value
+          .trim()
+          .toLowerCase();
+
+
+      const setting =
+        subjects[currentSubject];
+
+
+      if (!setting) {
+        return;
+      }
+
+
+      const questionList =
+        document.getElementById(
+          "question-list"
+        );
+
+
+      questionList.innerHTML = "";
+
+
+      const rows =
+        sheetData.slice(1);
+
+
+      let questionCount = 0;
+
+
+      rows.forEach(row => {
+
+        const question =
+          row[setting.questionColumn]
+            ?.trim() || "";
+
+
+        const answer =
+          row[setting.answerColumn]
+            ?.trim() || "";
+
+
+        if (!question) {
+          return;
+        }
+
+
+        // 問題文または答えに検索語が含まれるか
+
+        const searchableText =
+          (
+            question +
+            " " +
+            answer
+          ).toLowerCase();
+
+
+        if (
+          keyword !== "" &&
+          !searchableText.includes(keyword)
+        ) {
+
+          return;
+
+        }
+
+
+        questionCount++;
+
+
+        createQuestionCard(
+          questionList,
+          questionCount,
+          question,
+          answer
+        );
+
+      });
+
+
+      if (questionCount === 0) {
+
+        questionList.innerHTML = `
+          <div class="empty">
+            該当する問題がありません。
+          </div>
+        `;
+
+      }
+
+    }
+
+
+    // =========================
+    // 起動
+    // =========================
+
+    loadSheet();
+
+  </script>
+
+</body>
+</html>
